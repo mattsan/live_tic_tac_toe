@@ -3,7 +3,11 @@ defmodule LiveTicTacToeWeb.BoardLive do
 
   require Logger
 
+  @topic "game:tic-tac-toe"
+
   def mount(_session, socket) do
+    LiveTicTacToeWeb.Endpoint.subscribe(@topic)
+
     new_socket =
       socket
       |> assign_initial_values()
@@ -37,6 +41,7 @@ defmodule LiveTicTacToeWeb.BoardLive do
           |> assign(:next, new_next)
           |> assign(:cells, new_cells)
 
+        LiveTicTacToeWeb.Endpoint.broadcast_from(self(), @topic, "update", %{cells: new_cells, next: new_next})
         {:noreply, new_socket}
 
       _ ->
@@ -45,6 +50,25 @@ defmodule LiveTicTacToeWeb.BoardLive do
   end
 
   def handle_event("clear", _, socket) do
+    new_socket =
+      socket
+      |> assign_initial_values()
+
+    LiveTicTacToeWeb.Endpoint.broadcast_from(self(), @topic, "clear", %{})
+
+    {:noreply, new_socket}
+  end
+
+  def handle_info(%{event: "update", payload: %{cells: cells, next: next}}, socket) do
+    new_socket =
+      socket
+      |> assign(:next, next)
+      |> assign(:cells, cells)
+
+    {:noreply, new_socket}
+  end
+
+  def handle_info(%{event: "clear"}, socket) do
     new_socket =
       socket
       |> assign_initial_values()
