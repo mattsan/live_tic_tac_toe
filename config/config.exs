@@ -12,7 +12,8 @@ config :live_tic_tac_toe, LiveTicTacToeWeb.Endpoint,
   url: [host: "localhost"],
   secret_key_base: "QXNMcKQgsHcg/TC+e7ffNpJXKXx3khBYzrmYu4lJODGGxfmTjCv1Ju0xDHglqlPA",
   render_errors: [view: LiveTicTacToeWeb.ErrorView, accepts: ~w(html json)],
-  pubsub: [name: LiveTicTacToe.PubSub, adapter: Phoenix.PubSub.PG2]
+  pubsub: [name: LiveTicTacToe.PubSub, adapter: Phoenix.PubSub.PG2],
+  live_view: [signing_salt: "live-tic-tac-toe"]
 
 # Configures Elixir's Logger
 config :logger, :console,
